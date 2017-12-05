@@ -20,13 +20,11 @@ def part1(maze):
     """
     ptr = 0
     step = 0
-    while True:
+    while 0 <= ptr < len(maze):
         offset = maze[ptr]
         maze[ptr] += 1
         ptr += offset
         step += 1
-        if ptr < 0 or ptr >= len(maze):
-            break
     return step
 
 def part2(maze):
@@ -46,7 +44,7 @@ def part2(maze):
     """
     ptr = 0
     step = 0
-    while True:
+    while 0 <= ptr < len(maze):
         offset = maze[ptr]
         if offset >= 3:
             maze[ptr] -= 1
@@ -54,8 +52,6 @@ def part2(maze):
             maze[ptr] += 1
         ptr += offset
         step += 1
-        if ptr < 0 or ptr >= len(maze):
-            break
     return step
 
 
