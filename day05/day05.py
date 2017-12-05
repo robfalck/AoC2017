@@ -73,4 +73,7 @@ if __name__ == '__main__':
     # reinitialize maze since we changed it
     maze = [int(s) for s in lines if len(s) > 0]
 
+    import time
+    t0 = time.time()
     print(part2(maze))
+    print('elapsed time: {0} seconds'.format(time.time()-t0))
