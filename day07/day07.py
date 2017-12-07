@@ -79,7 +79,6 @@ def find_faulty_weight(G, base_node, tier=2):
     else:
         # end the recursive search, we found the faulty disk
         print('child tiers balanced, problem disk found')
-        pass
 
 def solve(input):
     """
