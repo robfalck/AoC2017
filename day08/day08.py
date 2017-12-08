@@ -12,8 +12,9 @@ condition_funcs = {'>': np.greater,
                    '!=': np.not_equal}
 
 # Functions to perform the increment/decrement (borrowed from numpy)
-instruction_funcs = {'inc' : np.add,
-                     'dec' : np.subtract}
+instruction_funcs = {'inc': np.add,
+                     'dec': np.subtract}
+
 
 def solve(input):
     """
