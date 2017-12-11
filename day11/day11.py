@@ -25,12 +25,6 @@ class Hex(object):
         """
         return - self.q - self.r
 
-    def __add__(self, other):
-        return Hex(self.q + other.q, self.r + other.r, self.s + other.s)
-
-    def __sub__(self, other):
-        return Hex(self.q - other.q, self.r - other.r, self.s - other.s)
-
     def distance_to_origin(self):
         """
         Returns the distance to the origin of the hex.
@@ -71,11 +65,11 @@ def solve(puzzle_input):
     for step in puzzle_input.split(','):
         q_offset, r_offset = qr_offset[step]
         next_hex = Hex(next_hex.q + q_offset, next_hex.r + r_offset)
-        manh_dist = origin.manhattan_distance_to(next_hex)
+        manh_dist = next_hex.distance_to_origin()
         if manh_dist > max_distance:
             max_distance = manh_dist
 
-    return origin.manhattan_distance_to(next_hex), max_distance
+    return next_hex.distance_to_origin(), max_distance
 
 
 
