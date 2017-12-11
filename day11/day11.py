@@ -56,10 +56,25 @@ qr_offset = {'n': (0, -1),
 
 
 def solve(puzzle_input):
+    """
+    Solve the Day 11 puzzle given an input string.
 
+    Parameters
+    ----------
+    puzzle_input : str
+        A comma-separated list of directions to take in a hex-grid
+        where the hexes are oriented with the flat sides aligned north-south.
+
+    Returns
+    -------
+    final_distance : int
+        The distance from the origin for the final step.
+    max_distance : int
+        The maximum distance from the origin for any step.
+
+    """
     origin = Hex(0, 0)
     next_hex = origin
-
     max_distance = 0
 
     for step in puzzle_input.split(','):
@@ -72,19 +87,16 @@ def solve(puzzle_input):
     return next_hex.distance_to_origin(), max_distance
 
 
-
-
-
-
 if __name__ == '__main__':
 
-    # assert(solve('ne,ne,ne') == 3)
-    # assert(solve('ne,ne,sw,sw') == 0)
-    print(solve('ne,ne,s,s'))
-    print(solve('se,sw,se,sw,sw'))
-
+    assert(solve('ne,ne,ne') == (3, 3))
+    assert(solve('ne,ne,sw,sw') == (0, 2))
+    assert(solve('ne,ne,s,s') == (2, 2))
+    assert(solve('se,sw,se,sw,sw') == (3, 3))
 
     with open('input.txt', 'r') as f:
         puzzle_input = f.readlines()[0].strip()
 
-    print(solve(puzzle_input))
+    final_distance, max_distance = solve(puzzle_input)
+    print('Final Distance:', final_distance)
+    print('Max Distance:', max_distance)
