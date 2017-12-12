@@ -22,13 +22,13 @@ def solve(puzzle_input):
     # Part 2
     groups = {0: nodes_connected_to_zero}
     grouped_nodes = set(nodes_connected_to_zero)
+    ungrouped_nodes = set(nodes) - grouped_nodes
 
-    for i in nodes:
-        if i not in grouped_nodes:
-            # Not found, create a new group
-            nodes_connected_to_i = [node for node in nodes if nx.has_path(G, node, i)]
-            groups[i] = [i] + nodes_connected_to_i
-            grouped_nodes |= set(groups[i])
+    while ungrouped_nodes:
+        node_i = next(iter(ungrouped_nodes))
+        nodes_connected_to_i = [node for node in ungrouped_nodes if nx.has_path(G, node, node_i)]
+        groups[node_i] = [node_i] + nodes_connected_to_i
+        ungrouped_nodes = ungrouped_nodes - set(nodes_connected_to_i)
 
     print('Number of groups', len(groups))
 
@@ -42,8 +42,10 @@ if __name__ == '__main__':
     solve(puzzle_input)
 
     print()
-
     with open('input.txt', 'r') as f:
         puzzle_input = f.readlines()
 
+    from time import time
+    t0 = time()
     solve(puzzle_input)
+    print('time:', time() - t0)
