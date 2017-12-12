@@ -24,6 +24,11 @@ def solve(puzzle_input):
     grouped_nodes = set(nodes_connected_to_zero)
     ungrouped_nodes = set(nodes) - grouped_nodes
 
+    # While there are still ungrouped nodes:
+    # - pick an ungrouped node
+    # - find the nodes connected to it
+    # - at that combination to groups
+    # - remove those nodes from the set of unconnected nodes
     while ungrouped_nodes:
         node_i = next(iter(ungrouped_nodes))
         nodes_connected_to_i = [node for node in ungrouped_nodes if nx.has_path(G, node, node_i)]
@@ -31,7 +36,6 @@ def solve(puzzle_input):
         ungrouped_nodes = ungrouped_nodes - set(nodes_connected_to_i)
 
     print('Number of groups', len(groups))
-
 
 
 if __name__ == '__main__':
