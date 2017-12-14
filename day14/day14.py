@@ -1,58 +1,22 @@
 from __future__ import print_function, division, absolute_import
 
+import sys
+import os
+
 import numpy as np
 
-def perform_iteration(ring, length, pos):
-    """
-    Solve the Day 10 puzzle.
-    """
-    if pos + length < len(ring):
-        ring[pos: pos+length] = ring[pos: pos+length][::-1]
-    else:
-        seq = ring[pos:] + ring[:pos + length - len(ring)]
-        len_new_left = pos + length - len(ring)
-        len_new_right =  len(ring) - pos
-        new_left = seq[:len_new_left][::-1]
-        new_right = seq[-len_new_right:][::-1]
-        ring[:len(new_left)] = new_left
-        ring[-len(new_right):] = new_right
-    return ring
+# Import functions from day10 (since this isn't a package do it the hard way)
+dir_, _ = os.path.split(__file__)
+sys.path.append(os.path.join(dir_, 'day10'))
 
-def knot_hash(input_str, rounds=64):
-    """
-    Return the Knot hash corresponding to the input string.
-    """
-    ring = list(range(256))
-    input_str = [ord(c) for c in input_str]
-    input_str += [17, 31, 73, 47, 23]
-
-    pos = 0
-    skip = 0
-
-    for round in range(rounds):
-        for length in input_str:
-            ring = perform_iteration(ring, length, pos)
-            pos = pos + length + skip
-            skip += 1
-
-            while pos >= len(ring):
-                pos = pos - len(ring)
-
-    im1 = 0
-    hash = ''
-    for i in range(16, 256+1, 16):
-        seq = ring[im1: i]
-        result = seq[0]
-        for j in range(1, len(seq)):
-            result = result ^ seq[j]
-        hash += '{0:02x}'.format(result)
-        im1 = i
-
-    return hash
+from day10.day10 import knot_hash
 
 
 def hash_to_binary(hash):
-    """ Convert a hexidecimal hash string to a 4-bit string of 0's and 1's """
+    """
+    Convert a hexidecimal hash string to
+    a 4-bit string of 0's and 1's
+    """
     return ''.join([bin(int(char, 16))[2:].zfill(4) for char in hash])
 
 
@@ -123,23 +87,14 @@ def make_block_group(block, grid, group=None):
 
 
 def solve(puzzle_input):
-
-    grid_str = ''
+    grid = np.zeros((128, 128), dtype=int)
 
     for row in range(128):
         hash_input = '{0}-{1}'.format(puzzle_input, row)
         hash = knot_hash(hash_input)
-        grid_str += hash_to_binary(hash) + '\n'
+        grid[row, :] = [int(char) for char in hash_to_binary(hash)]
 
-    print('squares in grid', grid_str.count('1'))
-
-    # Convert our string grid to a numpy 2D array
-    grid = np.zeros((128, 128), dtype=int)
-    for i, row in enumerate(grid_str.split('\n')):
-        for j, char in enumerate(row):
-            grid[i, j] = int(char)
-
-    np.set_printoptions(linewidth=1024, edgeitems=1024)
+    print('squares in grid', np.count_nonzero(grid))
 
     # Keep track of all blocks that have been grouped
     grouped_blocks = set()

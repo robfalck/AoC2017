@@ -35,7 +35,8 @@ def solve_part1(ring, lengths, rounds=1):
     return ring
 
 
-def solve_part2(ring, lengths, rounds=64):
+def knot_hash(lengths, rounds=64):
+    ring = list(range(256))
     lengths = [ord(c) for c in lengths]
     lengths += [17, 31, 73, 47, 23]
 
@@ -61,7 +62,7 @@ def solve_part2(ring, lengths, rounds=64):
         hash += '{0:02x}'.format(result)
         im1 = i
 
-    return ring, hash
+    return hash
 
 
 if __name__ == '__main__':
@@ -77,13 +78,11 @@ if __name__ == '__main__':
     lengths = [225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110]
     ring = solve_part1(ring, lengths)
 
-    print('solution part 1:', np.prod(ring[:2]))
+    print('solution part 1:', np.prod(ring[:2]))  # 23874
 
     # Part 2
-
-    ring = list(range(256))
     lengths = ''
-    ring, hash = solve_part2(ring, lengths, rounds=64)
+    hash = knot_hash(lengths, rounds=64)
 
     print()
     print('Tests:')
@@ -91,14 +90,12 @@ if __name__ == '__main__':
     print(hash)
     print()
 
-    ring = list(range(256))
     print('3efbe78a8d82f29979031a4aa0b16a9d')
     lengths = '1,2,3'
-    ring, hash = solve_part2(ring, lengths, rounds=64)
+    hash = knot_hash(lengths, rounds=64)
     print(hash)
     print()
 
-    ring = list(range(256))
     lengths = '225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110'
-    ring, hash = solve_part2(ring, lengths, rounds=64)
-    print('solution part 2:', hash)
+    hash = knot_hash(lengths, rounds=64)
+    print('solution part 2:', hash)  # e1a65bfb5a5ce396025fab5528c25a87
