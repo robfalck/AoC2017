@@ -6,10 +6,9 @@ import os
 import numpy as np
 
 # Import functions from day10 (since this isn't a package do it the hard way)
-dir_, _ = os.path.split(__file__)
-sys.path.append(os.path.join(dir_, 'day10'))
+sys.path.append(os.path.abspath(os.path.join(__file__ ,"../../day10")))
 
-from day10.day10 import knot_hash
+from day10 import knot_hash
 
 
 def hash_to_binary(hash):
