@@ -3,7 +3,7 @@ from __future__ import print_function, division, absolute_import
 import numpy as np
 
 
-def perform_iteration(mylist, length, pos):
+def perform_iteration(ring, length, pos):
     """
     Solve the Day 10 puzzle.
     """
