@@ -1,5 +1,7 @@
 from __future__ import print_function, division, absolute_import
 
+from time import time
+
 try:
     # Python 2
     from itertools import izip
@@ -7,7 +9,6 @@ except ImportError:
     # Python 3
     izip = zip
 
-from time import time
 
 # Puzzle input
 start = {'a': 618,
@@ -20,6 +21,7 @@ factor = {'a': 16807,
           'b': 48271}
 
 bit_mask = 0b1111111111111111
+
 
 def gen(n, name='a', use_mult=False):
     """
