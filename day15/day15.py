@@ -19,6 +19,7 @@ multiple = {'a': 4,
 factor = {'a': 16807,
           'b': 48271}
 
+bit_mask = 0b1111111111111111
 
 def gen(n, name='a', use_mult=False):
     """
@@ -57,15 +58,31 @@ def gen(n, name='a', use_mult=False):
 
 
 def solve(n=40000000, use_mult=False):
+    """
+    Iterate through generators A and B, incrementing score by 1 when
+    the 16 least significant bits are the same.
+
+    Parameters
+    ----------
+    n : int
+        The number of iterations to perform for the generators
+    use_mult : bool
+        True if the multiplier should be used in the generator (part 2), otherwise False (part 1)
+
+    Returns
+    -------
+    score : int
+        The score obtained for the given number of iterations.
+
+    """
     A = gen(n, name='a', use_mult=use_mult)
     B = gen(n, name='b', use_mult=use_mult)
 
     score = 0
 
     for a, b in izip(A, B):
-        bin_a = bin(a)[2:]
-        bin_b = bin(b)[2:]
-        if bin_a[-16:] == bin_b[-16:]:
+        # Extract 16 least significant bits and compare
+        if a & bit_mask == b & bit_mask:
             score += 1
 
     return score
@@ -74,13 +91,13 @@ def solve(n=40000000, use_mult=False):
 if __name__ == '__main__':
 
     t0 = time()
-    score = solve(40_000_000, use_mult=False)
+    score = solve(40000000, use_mult=False)
     print('Part 1 Score:', score)  # 577
     print('Time to solve part 1:', time()-t0)
 
     print()
 
     t0 = time()
-    score = solve(5_000_000, use_mult=True)
+    score = solve(5000000, use_mult=True)
     print('Part 2 Score:', score)  # 316
     print('Time to solve part 2:', time()-t0)
