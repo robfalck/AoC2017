@@ -35,10 +35,9 @@ class Program(object):
     def snd(self, y):
         self.output_queue.append(self.decode_y(y))
         if self.id == 1:
-            print(self.id, "snd", self.decode_y(y), len(self.output_queue))
+            print(1, 'snd', self.decode_y(y), self.output_queue)
+            pass
         self.send_count += 1
-        if self.id == 1 and self.send_count > 10:
-            exit(0)
         self.idx += 1
 
     def set(self, x, y):
@@ -66,7 +65,12 @@ class Program(object):
             self.waiting = True
 
     def jgz(self, x, y):
-        if self.registers.get(x, 0) > 0:
+        if x.isalpha():
+            reg_name = x
+        else:
+            reg_name = chr(int(x)+97)
+
+        if self.registers.get(reg_name, 0) > 0:
             self.idx = self.idx + self.decode_y(y)
         else:
             self.idx += 1
@@ -96,10 +100,9 @@ def solve(inp):
         program_1.execute_next()
         program_0.execute_next()
         i += 1
+        print(program_1.idx, program_1.registers)
         if program_0.is_waiting() and program_1.is_waiting():
             # Deadlock!
-            break
-        if i > 1000000000:
             break
 
     print(program_0.send_count, program_1.send_count)
