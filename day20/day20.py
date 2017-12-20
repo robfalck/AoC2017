@@ -29,7 +29,7 @@ def solve(inp, part=2):
 
     # Simulate
     collided = set()
-    for i in range(200):
+    for i in range(500):
         pmat[:, 3:6] += pmat[:, 6:9]  # update velocity
         pmat[:, :3] += pmat[:, 3:6]   # update position
 
