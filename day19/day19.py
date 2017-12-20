@@ -54,53 +54,20 @@ class Mover(object):
             return True
         return False
 
-
-    def look_direction(self, direction, look_ahead=1):
-        print('looking', direction, look_ahead)
-        if self.is_opposite_direction(direction):
-            return 'no'
-        try:
-            drow_map = {'n': -1,
-                        's': 1}
-            dcol_map = {'e': 1,
-                        'w': -1}
-            acceptable_chars = {'n': '+|', 's': '+|', 'e': '+-', 'w': '+-'}
-            maybe_chars = {'n': '-', 's': '-', 'e': '|', 'w': '|'}
-            print(direction, drow_map.get(direction, 0), dcol_map.get(direction, 0))
-            char = self.mat[self.row + look_ahead * drow_map.get(direction, 0),
-                            self.col + look_ahead * dcol_map.get(direction, 0)]
-            if look_ahead == 1 and (char in maybe_chars[direction] or char.isalpha):
-                print('maybe')
-                return 'maybe'
-            elif look_ahead == 2 and char in acceptable_chars[direction]:
-                print('yes')
-                return 'yes'
-            else:
-                print('no')
-                return 'no'
-        except Exception as e:
-            print(e)
-            return 'no'
-
-
     def find_new_heading(self):
         directions = 'n', 's', 'e', 'w'
-
         for d in directions:
             if self.is_opposite_direction(d):
                 continue
-
             try:
                 if self.mat[self.row + drow[d], self.col + dcol[d]] != ' ':
                     return d
             except:
                 pass
-
         self.finished = True
 
     def check_for_fork(self):
-        char = self.mat[self.row, self.col]
-        return char == '+'
+        return self.mat[self.row, self.col] == '+'
 
     def walk(self):
         while not self.finished:
