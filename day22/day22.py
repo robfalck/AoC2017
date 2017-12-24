@@ -106,16 +106,47 @@ class Carrier(object):
 class CarrierPart2(Carrier):
 
     def __init__(self, initial_map):
-        super(CarrierPart2, self).__init__(initial_map)
-        self.weakened = set()
-        self.flagged = set()
+        self.pos = np.array((0, 0), dtype=int)
+        self.vel = np.array(NORTH, dtype=int)
+        self.infections_caused = 0
+        self.problem_nodes = {}
+        self.initialize_map(initial_map)
+
+    def initialize_map(self, initial_map):
+        self.problem_nodes.clear()
+        n = len(initial_map)
+        c = (n - 1) // 2
+        for i in range(len(initial_map)):
+            for j in range(len(initial_map[i])):
+                if initial_map[i][j] == '#':
+                    self.problem_nodes[i-c, j-c] = '#'
+    #
+    # def turn_left(self):
+    #     drow, dcol = self.vel
+    #     if (drow, dcol) == NORTH:
+    #         self.vel[:] = WEST
+    #     elif (drow, dcol) == EAST:
+    #         self.vel[:] = NORTH
+    #     elif (drow, dcol) == SOUTH:
+    #         self.vel[:] = EAST
+    #     elif (drow, dcol) == WEST:
+    #         self.vel[:] = SOUTH
+    #
+    # def turn_right(self):
+    #     drow, dcol = self.vel
+    #     if (drow, dcol) == NORTH:
+    #         self.vel[:] = EAST
+    #     elif (drow, dcol) == EAST:
+    #         self.vel[:] = SOUTH
+    #     elif (drow, dcol) == SOUTH:
+    #         self.vel[:] = WEST
+    #     elif (drow, dcol) == WEST:
+    #         self.vel[:] = NORTH
 
     def burst(self):
         pos_tup = tuple(self.pos.tolist())
 
-        current_infected = pos_tup in self.infected
-        current_weakened = pos_tup in self.weakened
-        current_flagged = pos_tup in self.flagged
+        current_status = self.problem_nodes.get(pos_tup, '.')
 
         # print(self.infected)
         #
@@ -123,22 +154,20 @@ class CarrierPart2(Carrier):
         # print('    Initial vel:', tuple(self.vel.tolist()))
         # print('    On Infected:', current_infected)
 
-        if current_infected:
-            self.infected.remove(pos_tup)
-            self.flagged.add(pos_tup)
+        if current_status == '#':
+            self.problem_nodes[pos_tup] = 'F'
             self.turn_right()
-        elif current_weakened:
-            self.weakened.remove(pos_tup)
-            self.infected.add(pos_tup)
+        elif current_status == 'W':
+            self.problem_nodes[pos_tup] = '#'
             self.infections_caused += 1
-        elif current_flagged:
+        elif current_status == 'F':
             self.turn_left()
             self.turn_left()
-            self.flagged.remove(pos_tup)
+            del self.problem_nodes[pos_tup]
         else:
             # Clean
             self.turn_left()
-            self.weakened.add(pos_tup)
+            self.problem_nodes[pos_tup] = 'W'
 
         self.pos += self.vel
 
@@ -169,7 +198,7 @@ def solve(inp, num_bursts=7):
     print()
 
     for i in range(num_bursts):
-        print('Burst', i)
+        # print('Burst', i)
         c2.burst()
 
     print('Part 2 Infections caused:', c2.infections_caused)  # 2510774
