@@ -3,16 +3,15 @@ from __future__ import print_function, division, absolute_import
 import copy
 import time
 import numpy as np
+import sys
 
 
 class Bridge(object):
 
-    def __init__(self, initial_component, available_components):
-        self.components = []
-        self.available_components = set()
-        self.available_components |= set(available_components)
-        self.components.append(initial_component)
-        self.available_components.remove(initial_component)
+    def __init__(self, initial_components, available_components):
+        self.components = list(initial_components)
+        self.score = sum([sum(tup) for tup in self.components])
+        self.available_components = available_components
 
     def next_required_number(self):
         if len(self.components) == 1:
@@ -31,10 +30,11 @@ class Bridge(object):
         if c not in self.available_components:
             raise ValueError('Component unavailable:', c)
         self.components.append(c)
+        self.score += sum(c)
         self.available_components.remove(c)
 
-    def score(self):
-        return sum([sum(tup) for tup in self.components])
+    # def score(self):
+    #     return sum([sum(tup) for tup in self.components])
 
     def length(self):
         return len(self.components)
@@ -54,18 +54,15 @@ class Bridge(object):
         new_bridges = []
 
         for nx in next_components:
-            b = copy.deepcopy(self)
+            b = Bridge(initial_components=tuple(self.components),
+                       available_components=self.available_components.copy())
             b.add_component(nx)
-            # print('')
-            # print(b.available_components)
-            #b.available_components.remove(nx)
             new_bridges.append(b)
         return new_bridges
 
     def __str__(self):
-        s = ' -- '.join(['{0}/{1}'.format(*c) for c in self.components])
+        s = '--'.join(['{0}/{1}'.format(*c) for c in self.components])
         return s
-
 
 
 def solve(inp):
@@ -77,54 +74,41 @@ def solve(inp):
     bridges = []
 
     for sc in starting_comps:
-        bridges.append(Bridge(sc, copy.deepcopy(components)))
+        bridges.append(Bridge((sc,), set(components)-set((sc,))))
 
     complete_bridges = []
     complete_bridges.extend(bridges)
 
-    for i in range(100000):
-        print('PASS ', i)
-        # print('  Starting Bridges')
-        # for b in bridges:
-        #     print('  ', str(b))
+    for i in range(1000):
+        print('.', end='')
+        sys.stdout.flush()
 
         new_bridges = []
         for b in bridges:
             new_bridges.extend(b.assemble_next())
 
-        # print('  Ending Bridges')
-        # for b in new_bridges:
-        #     print('  ', str(b))
-        # print('number of bridges after assembly pass', len(new_bridges))
-        #
-        # print('\n\n\n')
-
         if not new_bridges:
+            # Terminate once no new bridges can be built
             break
 
         bridges = new_bridges
         complete_bridges.extend(new_bridges)
+    strongest_bridge = complete_bridges[np.argmax([b.score for b in complete_bridges])]
 
-    # print('Complete bridges')
-    # for b in complete_bridges:
-    #     print(str(b))
-    #     print(b.score())
-
-    strongest_bridge = complete_bridges[np.argmax([b.score() for b in complete_bridges])]
-
+    print()
     print('Strongest bridge:')
-    print(str(strongest_bridge))
-    print(strongest_bridge.score())
+    print('   ', str(strongest_bridge))
+    print('    strength = ', strongest_bridge.score, 'length =', strongest_bridge.length())
 
     longest_length = np.max([b.length() for b in complete_bridges])
 
     longest_bridges = [b for b in bridges if b.length() == longest_length]
 
-    strongest_longest_bridge = longest_bridges[np.argmax([b.score() for b in longest_bridges])]
+    strongest_longest_bridge = longest_bridges[np.argmax([b.score for b in longest_bridges])]
 
     print('Strongest longest bridge:')
-    print(str(strongest_longest_bridge))
-    print('strength = ', strongest_longest_bridge.score(), 'length =', strongest_longest_bridge.length())
+    print('   ', str(strongest_longest_bridge))
+    print('    strength = ', strongest_longest_bridge.score, 'length =', strongest_longest_bridge.length())
 
 
 
@@ -140,9 +124,9 @@ if __name__ == '__main__':
     solve(puzzle_input)
     print('Time to solve test:', time.time()-t0, 'sec')
 
-    # with open('input.txt', 'r') as f:
-    #     puzzle_input = [line.strip() for line in f.readlines() if line]
-    #
-    # t0 = time.time()
-    # solve(puzzle_input)
-    # print('Time to solve:', time.time()-t0, 'sec')
+    with open('input.txt', 'r') as f:
+        puzzle_input = [line.strip() for line in f.readlines() if line]
+
+    t0 = time.time()
+    solve(puzzle_input)
+    print('Time to solve:', time.time()-t0, 'sec')
